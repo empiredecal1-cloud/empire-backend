@@ -1,26 +1,27 @@
 import express from "express";
-import { generateResponse, sendEmail } from "./utils.js";
+import openaiClient from "./utils.js";
 
 const router = express.Router();
 
-// test route
 router.get("/", (req, res) => {
-  res.send("API is working");
+  res.send("API is running");
 });
 
-// main route
-router.post("/chat", async (req, res) => {
+router.post("/generate", async (req, res) => {
   try {
-    const { message } = req.body;
+    const { prompt } = req.body;
 
-    const aiResponse = await generateResponse(message);
+    const response = await openaiClient.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [{ role: "user", content: prompt }]
+    });
 
-    await sendEmail(aiResponse);
-
-    res.json({ reply: aiResponse });
+    res.json({
+      result: response.choices[0].message.content
+    });
   } catch (error) {
-    console.error("ERROR:", error);
-    res.status(500).send("Something broke");
+    console.error(error);
+    res.status(500).json({ error: "Something went wrong" });
   }
 });
 
