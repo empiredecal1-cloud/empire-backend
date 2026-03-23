@@ -1,15 +1,24 @@
-import express from "express";
-import routes from "./routes.js";
+// server.js
 
+const express = require("express");
 const app = express();
 
+// Middleware
 app.use(express.json());
 
-// use routes
-app.use("/", routes);
+// Root route (important so your URL shows something)
+app.get("/", (req, res) => {
+  res.send("✅ Server is running!");
+});
 
-const PORT = process.env.PORT || 3000;
+// Example API route
+app.get("/api", (req, res) => {
+  res.json({ message: "Hello from backend 🚀" });
+});
+
+// Use dynamic port (REQUIRED for Render)
+const PORT = process.env.PORT || 10000;
 
 app.listen(PORT, () => {
-  console.log("Server running on port " + PORT);
+  console.log(`🚀 Server running on port ${PORT}`);
 });
